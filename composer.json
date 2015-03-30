@@ -1,0 +1,22 @@
+{
+	"name": "evgeny-gavrilov/yii2-many-to-many",
+	"description": "Extension many to many relation for Yii2 Framework.",
+    "type": "yii2-extension",
+	"keywords": ["yii2", "behavior", "relation", "many to many"],
+    "license": "MTI",
+	"authors": [
+		{
+			"name": "Evgeny Gavrilov",
+			"email": "e.r.gavrilov@gmail.com"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {
+        "yiisoft/yii2": "~2.0.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"EvgenyGavrilov\\behavior\\": "src"
+		}
+	}
+}
