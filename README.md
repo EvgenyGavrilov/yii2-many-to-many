@@ -1,9 +1,7 @@
 Yii2 many to many behavior
 ------------------------
 
-Этот behavior позволяет обновить или удалить связи многое ко многим, описанных в модели с помощью via() или viaTable().
-
-This behavior allows update or delete related in the junction table, described in the model with
+This behavior allows to update or delete relations in the junction table, which are described in the model with
 [via()](http://www.yiiframework.com/doc-2.0/yii-db-activerelationtrait.html#via%28%29-detail)
 or
 [viaTable()](http://www.yiiframework.com/doc-2.0/yii-db-activequery.html#viaTable%28%29-detail).
@@ -15,17 +13,17 @@ in the model or other way.
 ```
 php composer.phar require evgeny-gavrilov/yii2-many-to-many
 ```
- 
+
 # Usage
+
+## Connection of behavior and description of the relation in the model
 ```php
 class User extends ActiveRecord
 {
     public function behaviors()
     {
         return [
-            'crossTable' => [
-                'class' => 'EvgenyGavrilov\behavior\ManyToManyBehavior'
-            ]
+            EvgenyGavrilov\behavior\ManyToManyBehavior::className()
         ];
     }
     
@@ -34,7 +32,10 @@ class User extends ActiveRecord
         return $this->hasMany(Group::className(), ['id' => 'group_id'])->viaTable('user_group', ['user_id' => 'id']);
     }
 }
+```
 
+## Usage in the code
+```php
 $user = User::findOne(1);
 // Add new or update relation
 $model->setRelated('groups', [1]);
