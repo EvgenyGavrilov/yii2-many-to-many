@@ -1,5 +1,9 @@
 language: php
 
+addons:
+  code_climate:
+    repo_token: ef11080b520a4fbdb33491b95988cce83110905d31db40afaa3c4c8756383d90
+
 php:
   - 5.4
   - 5.5
@@ -8,10 +12,14 @@ php:
 
 install:
   - composer self-update
+  - composer global require codeclimate/php-test-reporter
   - composer install
 
 before_script:
   - mysql -e 'create database yii2_many_to_many;'
 
 script:
-  - phpunit
+  - phpunit --coverage-clover build/logs/clover.xml
+
+after_script:
+  - vendor/bin/test-reporter
