@@ -1,9 +1,5 @@
 language: php
 
-addons:
-  code_climate:
-    repo_token: ef11080b520a4fbdb33491b95988cce83110905d31db40afaa3c4c8756383d90
-
 php:
   - 5.4
   - 5.5
@@ -22,4 +18,5 @@ script:
   - phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
-  - vendor/bin/test-reporter
+  - ~/.composer/vendor/bin/test-reporter --stdout > codeclimate.json
+  - "curl -X POST -d @codeclimate.json -H 'Content-Type: application/json' -H 'User-Agent: Code Climate (PHP Test Reporter v0.1.1)' https://codeclimate.com/test_reports"

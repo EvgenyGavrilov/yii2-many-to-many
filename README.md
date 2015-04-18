@@ -2,6 +2,8 @@ Yii2 many to many behavior
 ------------------------
 [![Build Status](https://travis-ci.org/EvgenyGavrilov/yii2-many-to-many.svg?branch=master)](https://travis-ci.org/EvgenyGavrilov/yii2-many-to-many)
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://packagist.org/packages/evgeny-gavrilov/yii2-many-to-many)
+[![Code Climate](https://codeclimate.com/github/EvgenyGavrilov/yii2-many-to-many/badges/gpa.svg)](https://codeclimate.com/github/EvgenyGavrilov/yii2-many-to-many)
+[![Test Coverage](https://codeclimate.com/github/EvgenyGavrilov/yii2-many-to-many/badges/coverage.svg)](https://codeclimate.com/github/EvgenyGavrilov/yii2-many-to-many)
 
 This behavior allows to update or delete relations in the junction table, which are described in the model with
 [via()](http://www.yiiframework.com/doc-2.0/yii-db-activerelationtrait.html#via%28%29-detail)
