@@ -10,8 +10,14 @@ $config = [
             'charset' => 'utf8',
         ],
     ],
+    'params' => [
+        'fileDump' => 'mysql.sql'
+    ],
 ];
 if (is_file(__DIR__ . '/config.local.php')) {
-    include(__DIR__ . '/config.local.php');
+    $config = array_merge(
+        $config,
+        require(__DIR__ . '/config.local.php')
+    );
 }
 return $config;

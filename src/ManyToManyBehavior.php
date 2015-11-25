@@ -6,6 +6,7 @@ use yii\base\Behavior;
 use yii\base\UnknownPropertyException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 
 /**
  * Behavior of relation update in junction table
@@ -70,21 +71,43 @@ class ManyToManyBehavior extends Behavior
     private $_related = [];
 
     /**
-     * Delete all records that are not in the array or delete all if the array is empty
+     * Delete all records.
      * @param string $name
      */
-    private function deleteOld($name)
+    private function deleteAll($name)
     {
         $db = $this->owner->getDb();
         $primaryKeyValue = $this->owner->getPrimaryKey();
         $meta = $this->_related[$name]['meta'];
+        $db
+            ->createCommand()
+            ->delete(
+                $meta['tableName'],
+                [
+                    $meta['foreignKey'] => $primaryKeyValue,
+                ]
+            )
+            ->execute();
+    }
+
+    /**
+     * @param string $name
+     * @return array
+     */
+    private function getIds($name)
+    {
+        $primaryKeyValue = $this->owner->getPrimaryKey();
+        $meta = $this->_related[$name]['meta'];
         $ids = $this->_related[$name]['ids'];
-        $condition = "{$meta['foreignKey']} = $primaryKeyValue";
-        if (!empty($ids)) {
-            $ids = implode(',', $ids);
-            $condition .= " AND {$meta['remoteKey']} NOT IN ({$ids})";
-        }
-        $db->createCommand()->delete($meta['tableName'], $condition)->execute();
+        $query = new Query();
+        $res = $query
+            ->from($meta['tableName'])
+            ->select($meta['remoteKey'])
+            ->where([
+                $meta['foreignKey'] => $primaryKeyValue,
+                $meta['remoteKey'] => $ids
+            ])->column($this->owner->getDb());
+        return array_diff($ids, $res);
     }
 
     /**
@@ -164,15 +187,22 @@ class ManyToManyBehavior extends Behavior
     public function updateRelations()
     {
         foreach ($this->_related as $nameRelation => $data) {
-            if ($data['deleteOld']) {
-                $this->deleteOld($nameRelation);
-            }
             $db = $this->owner->getDb();
-            $primaryKeyValue = $this->owner->getPrimaryKey();
             $meta = $data['meta'];
-            foreach ($data['ids'] as $id) {
-                $db->createCommand(
-                    "INSERT IGNORE `{$meta['tableName']}` (`{$meta['foreignKey']}`, `{$meta['remoteKey']}`) VALUES ({$primaryKeyValue}, {$id});"
+            $primaryKeyValue = $this->owner->getPrimaryKey();
+            if ($data['deleteOld']) {
+                $this->deleteAll($nameRelation);
+                $ids = $data['ids'];
+            } else {
+                $ids = $this->getIds($nameRelation);
+            }
+            foreach ($ids as $id) {
+                $db->createCommand()->insert(
+                    $meta['tableName'],
+                    [
+                        $meta['foreignKey'] => $primaryKeyValue,
+                        $meta['remoteKey'] => $id
+                    ]
                 )->execute();
             }
         }
